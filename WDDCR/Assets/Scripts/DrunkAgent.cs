@@ -10,7 +10,9 @@ using Random = UnityEngine.Random;
 
 public class DrunkAgent : Agent
 {
-    private String[] names = { "Aaran", "Aaren", "Aarez", "Aarman", "Aaron", "Aaron-James", "Aarron", "Aaryan",
+    private String[] names =
+    {
+        "Aaran", "Aaren", "Aarez", "Aarman", "Aaron", "Aaron-James", "Aarron", "Aaryan",
         "Aaryn", "Aayan", "Aazaan", "Abaan", "Abbas", "Abdallah", "Abdalroof", "Abdihakim", "Abdirahman", "Abdisalam",
         "Abdul", "Abdul-Aziz", "Abdulbasir", "Abdulkadir", "Abdulkarem", "Abdulkhader", "Abdullah", "Abdul-Majeed",
         "Abdulmalik", "Abdul-Rehman", "Abdur", "Abdurraheem", "Abdur-Rahman", "Abdur-Rehmaan", "Abel", "Abhinav",
@@ -262,10 +264,9 @@ public class DrunkAgent : Agent
         "Zakaria", "Zakariya", "Zakary", "Zaki", "Zakir", "Zakk", "Zamaar", "Zander", "Zane", "Zarran", "Zayd", "Zayn",
         "Zayne", "Ze", "Zechariah", "Zeek", "Zeeshan", "Zeid", "Zein", "Zen", "Zendel", "Zenith", "Zennon", "Zeph",
         "Zerah", "Zhen", "Zhi", "Zhong", "Zhuo", "Zi", "Zidane", "Zijie", "Zinedine", "Zion", "Zishan", "Ziya",
-        "Ziyaan", "Zohaib", "Zohair", "Zoubaeir", "Zubair", "Zubayr", "Zuriel" };
+        "Ziyaan", "Zohaib", "Zohair", "Zoubaeir", "Zubair", "Zubayr", "Zuriel"
+    };
 
-    
-    
     private Transform target, startingPoint;
     private Animator anim;
     public float speed = 5.0f, turnSpeed = 5.0f;
@@ -276,11 +277,20 @@ public class DrunkAgent : Agent
     private float vSpeed = 0.0f, gravity = 9.81f;
     private int[] rewardIndicies = new int[8];
     private Dictionary<int, bool> rewardTracker = new Dictionary<int, bool>();
-    [Header("Rewards")]
-    [SerializeField] private float rewardForGettingCloser = 0.1f, rewardForCrossingTrack = 1.0f, rewardForFinishing = 2.0f;
-[Space]
-    [Header("Punishments")] [SerializeField]
-    private float punishmentForWalkingAway = -0.01f, punishmentForTrainCollision = -1.0f, punishmentForWalkingIntoBoundaries = -0.1f;
+    [SerializeField] private AudioClip[] clips = new AudioClip[8];
+    private AudioSource src;
+    private bool dying = false;
+    [Header("Rewards")] 
+    [SerializeField] private float rewardForGettingCloser = 0.1f;
+    [SerializeField] private float rewardForCrossingTrack = 1.0f;
+    [SerializeField] private float rewardForFinishing = 2.0f;
+    
+    [Space] 
+    
+    [Header("Punishments")] 
+    [SerializeField] private float punishmentForWalkingAway = -0.01f;
+    [SerializeField] private float punishmentForTrainCollision = -1.0f;
+    [SerializeField] private float punishmentForWalkingIntoBoundaries = -0.1f;
 
     private Image nameBG;
     private Text name;
@@ -288,6 +298,7 @@ public class DrunkAgent : Agent
     {
         for (int i = 0; i < rewardIndicies.Length; i++) rewardTracker.Add(i, false);
         cc = GetComponent<CharacterController>();
+        src = GetComponent<AudioSource>();
         anim = GetComponent<Animator>();
         nameBG = GetComponentInChildren<Image>();
         name = GetComponentInChildren<Text>();
@@ -303,8 +314,9 @@ public class DrunkAgent : Agent
 
     private void Reset()
     {
+        dying = false;
         cc.enabled = false;
-        
+        anim.enabled = true;
         var bounds = startingPoint.GetComponent<BoxCollider>().bounds;
         var start = new Vector3(Random.Range(bounds.min.x, bounds.max.x), bounds.center.y, 
             Random.Range(bounds.min.z, bounds.max.z));
@@ -367,9 +379,11 @@ public class DrunkAgent : Agent
         
             
         transform.Rotate(0, inputX * turnSpeed * Time.deltaTime, 0);
-        var vel = transform.forward * inputY * speed;
+        var vel = transform.forward *inputY * speed;
+        if (cc.isGrounded) vSpeed = 0.0f;
+        else vSpeed -= gravity;
         // apply gravity acceleration to vertical speed:
-        vel.y = vSpeed * gravity; // include vertical speed in vel
+        vel.y = vSpeed; // include vertical speed in vel
         // convert vel to displacement and Move the character:
         cc.Move(vel * Time.deltaTime);
         
@@ -377,7 +391,7 @@ public class DrunkAgent : Agent
         //cc.Move(new Vector3(inputY * -speed, 0, inputX * speed));
         
         
-        anim.SetFloat("Speed", inputY);
+        anim.SetFloat("Speed",  inputY);
         //if(Vector3.Distance(lastPosition,transform.position)<0.01f) {AddReward(-0.1f);}
         lastPosition = transform.localPosition;
 
@@ -395,11 +409,13 @@ public class DrunkAgent : Agent
             /*print("Reward of " + rewardForFinishing + " given to " + name.text + " for getting to the bar");*/
             EndEpisode(); //reached goal
 }
-        else if (other.gameObject.layer == 8) {
+        else if (other.gameObject.layer == 8)
+        {
+            if (dying) return;
             AddReward(punishmentForTrainCollision);
             /*print("Reward of " + punishmentForTrainCollision + " given to " + name.text + " for being mowed down by a train");*/
-            EndEpisode(); // Hit by Train 
-}
+            StartCoroutine(WaitToRespawn()); // Hit by Train 
+        }
         else if (other.gameObject.layer == 14)
         {
             if (rewardTracker[other.gameObject.GetComponent<Reward>().id] == false)
@@ -411,6 +427,7 @@ public class DrunkAgent : Agent
         }
         else if (other.gameObject.layer == 13) {
             AddReward(punishmentForWalkingIntoBoundaries);
+            EndEpisode();
             /*print("Reward of " + punishmentForWalkingIntoBoundaries + " given to " + name.text + " for walking into bounds");*/
             // Hit Boundaries
         }
@@ -418,9 +435,10 @@ public class DrunkAgent : Agent
         
     }
 
+  
     IEnumerator CheckDistance()
     {
-        while (true && transform.position.x > TrainManager.Instance.trackPositionsX[7])
+        while (true)
         {
             /*print("Distance is " + Vector3.Distance(transform.position, target.position) + "Previous distance was " +
                   previousDistanceToTarget);*/
@@ -449,5 +467,16 @@ public class DrunkAgent : Agent
     }
     public float Map(float value, float min1, float max1, float min2, float max2) {
         return min2 + (max2 - min2) * ((value - min1) / (max1 - min1));
+    }
+
+    IEnumerator WaitToRespawn()
+    {
+        dying = true;
+        anim.enabled = false;
+        src.pitch = Random.Range(1.2f, 1.8f);
+        src.PlayOneShot(clips[Random.Range(0,clips.Length-1)]);
+        yield return new WaitForSeconds(1.0f);
+        EndEpisode();
+        
     }
 }

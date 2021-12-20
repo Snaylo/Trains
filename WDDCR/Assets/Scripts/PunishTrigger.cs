@@ -7,6 +7,6 @@ public class PunishTrigger : MonoBehaviour
 {
     private void OnTriggerStay(Collider other)
     {
-        other.GetComponent<DrunkAgent>().StayingInStartingGround();
+        other.GetComponent<DrunkAgent>()?.StayingInStartingGround();
     }
 }

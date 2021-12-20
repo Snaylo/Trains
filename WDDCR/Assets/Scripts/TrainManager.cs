@@ -42,6 +42,7 @@ public class TrainManager : MonoBehaviour
         {
             cameras.Add(drunk.gameObject.GetComponentInChildren<Camera>());
             drunk.gameObject.GetComponentInChildren<Camera>().enabled = false;
+            drunk.gameObject.GetComponentInChildren<AudioListener>().enabled = false;
 
         }
     }
@@ -52,17 +53,21 @@ public class TrainManager : MonoBehaviour
         {
             cameras[camera].gameObject.tag = "Untagged";
             cameras[camera].enabled = false;
+            cameras[camera].gameObject.transform.GetComponent<AudioListener>().enabled = false;
             if (camera >= cameras.Count-1) camera = 0;
             else camera++;
             cameras[camera].enabled = true;
+            cameras[camera].gameObject.transform.GetComponent<AudioListener>().enabled = true;
             cameras[camera].gameObject.tag = "MainCamera";
         }  if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             cameras[camera].gameObject.tag = "Untagged";
             cameras[camera].enabled = false;
+            cameras[camera].gameObject.transform.GetComponent<AudioListener>().enabled = false;
             if (camera <= 0) camera = cameras.Count-1;
             else camera--;
             cameras[camera].enabled = true;
+            cameras[camera].gameObject.transform.GetComponent<AudioListener>().enabled = true;
             cameras[camera].gameObject.tag = "MainCamera";
         } 
     }
@@ -106,7 +111,10 @@ public class TrainManager : MonoBehaviour
                 var train = Instantiate(trainPrefab, startPos, quaternion.identity);
                 var trainScript = train.GetComponent<Train>();
                 var speedOfTrain = (track + 2) / 2;
-                trainScript.SetSpeed(Random.Range(speedOfTrain*minimumSpeed, speedOfTrain*maximumSpeed));
+                var finalSpeed = Random.Range(speedOfTrain * minimumSpeed, speedOfTrain * maximumSpeed);
+                trainScript.SetSpeed(finalSpeed);
+                train.GetComponent<AudioSource>().pitch = Map(finalSpeed, speedOfTrain * minimumSpeed,
+                    speedOfTrain * maximumSpeed, 0.5f, 2.0f);
                 var trainLength = Random.Range(minCarriages, maxCarriages);
                 trainScript.numberOfCarriages = trainLength;
                 trainScript.driveRight = right;
@@ -132,6 +140,9 @@ public class TrainManager : MonoBehaviour
         yield return new WaitForSeconds(1.0f);
        
         
+    }
+    public float Map(float value, float min1, float max1, float min2, float max2) {
+        return min2 + (max2 - min2) * ((value - min1) / (max1 - min1));
     }
 
 
