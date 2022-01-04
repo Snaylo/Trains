@@ -2,40 +2,22 @@
     "DrunkAgent": {
         "checkpoints": [
             {
-                "steps": 499996,
-                "file_path": "results\\DrunkAgent_Imitation\\DrunkAgent\\DrunkAgent-499996.onnx",
+                "steps": 46740,
+                "file_path": "results\\DrunkAgent_Imitation\\DrunkAgent\\DrunkAgent-46740.onnx",
                 "reward": null,
-                "creation_time": 1640033913.547102,
+                "creation_time": 1640076438.119187,
                 "auxillary_file_paths": [
-                    "results\\DrunkAgent_Imitation\\DrunkAgent\\DrunkAgent-499996.pt"
-                ]
-            },
-            {
-                "steps": 999968,
-                "file_path": "results\\DrunkAgent_Imitation\\DrunkAgent\\DrunkAgent-999968.onnx",
-                "reward": null,
-                "creation_time": 1640035174.5683749,
-                "auxillary_file_paths": [
-                    "results\\DrunkAgent_Imitation\\DrunkAgent\\DrunkAgent-999968.pt"
-                ]
-            },
-            {
-                "steps": 1335243,
-                "file_path": "results\\DrunkAgent_Imitation\\DrunkAgent\\DrunkAgent-1335243.onnx",
-                "reward": 0.09221761768276338,
-                "creation_time": 1640036078.3702128,
-                "auxillary_file_paths": [
-                    "results\\DrunkAgent_Imitation\\DrunkAgent\\DrunkAgent-1335243.pt"
+                    "results\\DrunkAgent_Imitation\\DrunkAgent\\DrunkAgent-46740.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 1335243,
+            "steps": 46740,
             "file_path": "results\\DrunkAgent_Imitation\\DrunkAgent.onnx",
-            "reward": 0.09221761768276338,
-            "creation_time": 1640036078.3702128,
+            "reward": null,
+            "creation_time": 1640076438.119187,
             "auxillary_file_paths": [
-                "results\\DrunkAgent_Imitation\\DrunkAgent\\DrunkAgent-1335243.pt"
+                "results\\DrunkAgent_Imitation\\DrunkAgent\\DrunkAgent-46740.pt"
             ]
         }
     },

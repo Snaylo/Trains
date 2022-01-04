@@ -23,13 +23,64 @@ behaviors:
         #gamma: 0.99
         #encoding_size: 256
       gail:
-        strength: 0.8
+        strength: 0.5
         demo_path: config\DrunkAgentDemo.demo
     behavioral_cloning:
-        strength: 0.8
+        strength: 0.5
         demo_path: config\DrunkAgentDemo.demo
     keep_checkpoints: 5
     max_steps: 500000000
     time_horizon: 64
     summary_freq: 10000
     threaded: true
+  environment_paramters:
+    train_speed:
+      curriculum:
+        - name: Lesson0
+          completion_criteria:
+            measure: reward
+            behaviour: DrunkAgent
+            signal_smoothing: true
+            min_lesson_length: 100
+            threshold: 1.0
+          value:
+            sampler_type: uniform
+            sampler_parameters:
+              min_value: 1.0
+              max_value: 5.0
+        - name: Lesson1
+            completion_criteria:
+              measure: reward
+              behaviour: DrunkAgent
+              signal_smoothing: true
+              min_lesson_length: 100
+              threshold: 1.5
+            value:
+              sampler_type: uniform
+              sampler_parameters:
+                min_value: 5.0
+                max_value: 15.0
+        - name: Lesson2
+            completion_criteria:
+              measure: reward
+              behaviour: DrunkAgent
+              signal_smoothing: true
+              min_lesson_length: 100
+              threshold: 2.0
+            value:
+              sampler_type: uniform
+              sampler_parameters:
+                min_value: 15.0
+                max_value: 30.0
+        - name: Lesson3
+            completion_criteria:
+              measure: reward
+              behaviour: DrunkAgent
+              signal_smoothing: true
+              min_lesson_length: 100
+              threshold: 4.0
+            value:
+              sampler_type: uniform
+              sampler_parameters:
+                min_value: 30.0
+                max_value: 50.0

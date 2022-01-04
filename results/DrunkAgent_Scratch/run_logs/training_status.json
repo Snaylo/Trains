@@ -1,0 +1,29 @@
+{
+    "DrunkAgent": {
+        "checkpoints": [
+            {
+                "steps": 360038,
+                "file_path": "results\\DrunkAgent_Scratch\\DrunkAgent\\DrunkAgent-360038.onnx",
+                "reward": -0.0024999999441206455,
+                "creation_time": 1640456163.580481,
+                "auxillary_file_paths": [
+                    "results\\DrunkAgent_Scratch\\DrunkAgent\\DrunkAgent-360038.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 360038,
+            "file_path": "results\\DrunkAgent_Scratch\\DrunkAgent.onnx",
+            "reward": -0.0024999999441206455,
+            "creation_time": 1640456163.580481,
+            "auxillary_file_paths": [
+                "results\\DrunkAgent_Scratch\\DrunkAgent\\DrunkAgent-360038.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.28.0.dev0",
+        "torch_version": "1.10.0+cu113"
+    }
+}

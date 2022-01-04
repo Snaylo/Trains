@@ -1,4 +1,9 @@
 conda activate unity_reinforcement
 cd C:\Users\scott\Documents\GitHub\Trains
-mlagents-learn --force config/parameters.yaml --run-id DrunkAgent_Imitation
+mlagents-learn --force config/CurriculumConfig.yaml --run-id DrunkAgent_Curriculum
+
+
+
+conda activate unity_reinforcement
+cd C:\Users\scott\Documents\GitHub\Trains
 tensorboard --logdir results --port 6006

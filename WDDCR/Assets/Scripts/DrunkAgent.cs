@@ -294,6 +294,7 @@ public class DrunkAgent : Agent
 
     private Image nameBG;
     private Text name;
+    private float _bestDistance = 200.0f;
     public override void Initialize()
     {
         for (int i = 0; i < rewardIndicies.Length; i++) rewardTracker.Add(i, false);
@@ -310,20 +311,23 @@ public class DrunkAgent : Agent
         var agentName = names[Random.Range(0, names.Length)];
         name.text = agentName;
         gameObject.name = agentName;
+        StartCoroutine(CheckBestDistance());
+        StartCoroutine(CheckDistance());
     }
 
     private void Reset()
     {
         dying = false;
         cc.enabled = false;
+        _bestDistance = 200.0f;
         anim.enabled = true;
         var bounds = startingPoint.GetComponent<BoxCollider>().bounds;
         var start = new Vector3(Random.Range(bounds.min.x, bounds.max.x), bounds.center.y, 
             Random.Range(bounds.min.z, bounds.max.z));
-        transform.localPosition = start;
+        transform.position = start;
         cc.enabled = true;
         for (int i = 0; i < rewardIndicies.Length; i++) rewardTracker[i] = false;
-        StartCoroutine(CheckDistance());
+        
     }
     
     public override void OnEpisodeBegin()
@@ -337,18 +341,15 @@ public class DrunkAgent : Agent
         inputX = cont[0];
         inputY = cont[1];
 
-        /*if(actions.DiscreteActions[0][1] == 1) inputX = -1.0f;
-        if(actions.DiscreteActions[1] == 1) inputX = -0.5f;
-        if(actions.DiscreteActions[2] == 1) inputX = 0;
-        if(actions.DiscreteActions[3] == 1) inputX = 0.5f;
-        if(actions.DiscreteActions[4] == 1) inputX = 1.0f;
-        
-        if(actions.DiscreteActions[5] == 1) inputY = -1.0f;
-        if(actions.DiscreteActions[6] == 1) inputY = -0.5f;
-        if(actions.DiscreteActions[8] == 1) inputY = 0.5f;
-        if(actions.DiscreteActions[9] == 1) inputY = 1.0f;
-        if(actions.DiscreteActions[7] == 1) inputY = 0;
-        */
+        /*if(actions.DiscreteActions[0] == 1) inputX = -1.0f;
+        else if(actions.DiscreteActions[1] == 1) inputX = 1.0f;
+        else if (actions.DiscreteActions[2] == 1) inputX = 0.0f;
+        else inputX = 0.0f;
+        if(actions.DiscreteActions[3] == 1) inputY = -0.5f;
+        else if(actions.DiscreteActions[4] == 1) inputY = 0.5f;
+        else if(actions.DiscreteActions[5] == 1) inputY = 1.0f;
+        else if(actions.DiscreteActions[6] == 1) inputY = 0;
+        else inputY = 0;*/
 
     }
 
@@ -358,6 +359,7 @@ public class DrunkAgent : Agent
         
         sensor.AddObservation(transform.position);
         sensor.AddObservation(target.position);
+        sensor.AddObservation(transform.rotation);
         /*sensor.AddObservation(transform.position.z);
         */
         //foreach (var t in TrainManager.Instance.trackPositionsX)
@@ -393,7 +395,7 @@ public class DrunkAgent : Agent
         
         anim.SetFloat("Speed",  inputY);
         //if(Vector3.Distance(lastPosition,transform.position)<0.01f) {AddReward(-0.1f);}
-        lastPosition = transform.localPosition;
+        lastPosition = transform.position;
 
     }
 
@@ -444,16 +446,16 @@ public class DrunkAgent : Agent
                   previousDistanceToTarget);*/
             if (Vector3.Distance(transform.position, target.position) < previousDistanceToTarget)
             {
-                AddReward(Map(Vector3.Distance(transform.position, target.position), 0, 250, rewardForGettingCloser,
-                    0));
+                //AddReward(Map(Vector3.Distance(transform.position, target.position), 0, 250, rewardForGettingCloser,0));
                 /*print("Reward is positive " +
                       Map(Vector3.Distance(transform.position, target.position), 0, 250, 0.1f, 0));*/
             }
 
             else if (Vector3.Distance(transform.position, target.position) > previousDistanceToTarget)
             {
-                AddReward(Map(Vector3.Distance(transform.position, target.position), 0, 250, 0,
-                    punishmentForWalkingAway));
+                /*AddReward(Map(Vector3.Distance(transform.position, target.position), 0, 250, 0,
+                    punishmentForWalkingAway));*/
+                AddReward(punishmentForWalkingAway);
                 /*print("Reward is negative " +
                       Map(Vector3.Distance(transform.position, target.position), 0, 250, 0, -0.01f));*/
             }
@@ -461,7 +463,27 @@ public class DrunkAgent : Agent
             /*AddReward(Vector3.Distance(transform.position, target.position) < previousDistanceToTarget
                 ? Map(Vector3.Distance(transform.position, target.position), 0, 250, 0.1f, 0)
                 : Map(Vector3.Distance(transform.position, target.position), 0, 250, 0, -0.1f));*/
-            previousDistanceToTarget = Vector3.Distance(transform.position, target.position);
+            previousDistanceToTarget = Vector3.Distance(transform.localPosition, target.localPosition);
+            yield return new WaitForSeconds(1.0f);
+        }
+    } IEnumerator CheckBestDistance()
+    {
+        while (true)
+        {
+            /*print("Distance is " + Vector3.Distance(transform.position, target.position) + "Previous distance was " +
+                  previousDistanceToTarget);*/
+            var distance = Vector3.Distance(transform.localPosition, target.localPosition);
+            if (distance < _bestDistance)
+            {
+                /*AddReward(Map(Vector3.Distance(transform.position, target.position), 0, 250, rewardForGettingCloser,
+                    0));*/
+                AddReward(rewardForGettingCloser);
+                _bestDistance = distance;
+
+                /*print("Reward is positive " +
+                      Map(Vector3.Distance(transform.position, target.position), 0, 250, 0.1f, 0));*/
+            }
+
             yield return new WaitForSeconds(1.0f);
         }
     }

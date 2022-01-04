@@ -13,6 +13,7 @@ public class Train : MonoBehaviour
     public void SetSpeed(float speed)
     {
         _speed = speed;
+        
     }
 
     private void Update()
@@ -25,7 +26,8 @@ public class Train : MonoBehaviour
             StartCoroutine(DestroyTrain());
             return;
         }
-        transform.position += new Vector3(0 , 0, _speed * Time.deltaTime);
+        if (driveRight)transform.position += new Vector3(0 , 0, _speed * Time.deltaTime);
+        else transform.position -= new Vector3(0 , 0, _speed * Time.deltaTime);
     }
 
     IEnumerator DestroyTrain()

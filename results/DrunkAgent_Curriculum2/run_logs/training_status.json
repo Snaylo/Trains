@@ -1,0 +1,68 @@
+{
+    "train_speed": {
+        "lesson_num": 0
+    },
+    "DrunkAgent": {
+        "checkpoints": [
+            {
+                "steps": 4999904,
+                "file_path": "results\\DrunkAgent_Curriculum2\\DrunkAgent\\DrunkAgent-4999904.onnx",
+                "reward": -0.02500000037252903,
+                "creation_time": 1641300535.9730437,
+                "auxillary_file_paths": [
+                    "results\\DrunkAgent_Curriculum2\\DrunkAgent\\DrunkAgent-4999904.pt"
+                ]
+            },
+            {
+                "steps": 5499883,
+                "file_path": "results\\DrunkAgent_Curriculum2\\DrunkAgent\\DrunkAgent-5499883.onnx",
+                "reward": null,
+                "creation_time": 1641301231.3287983,
+                "auxillary_file_paths": [
+                    "results\\DrunkAgent_Curriculum2\\DrunkAgent\\DrunkAgent-5499883.pt"
+                ]
+            },
+            {
+                "steps": 5999900,
+                "file_path": "results\\DrunkAgent_Curriculum2\\DrunkAgent\\DrunkAgent-5999900.onnx",
+                "reward": -0.02500000037252903,
+                "creation_time": 1641301899.3146052,
+                "auxillary_file_paths": [
+                    "results\\DrunkAgent_Curriculum2\\DrunkAgent\\DrunkAgent-5999900.pt"
+                ]
+            },
+            {
+                "steps": 6499987,
+                "file_path": "results\\DrunkAgent_Curriculum2\\DrunkAgent\\DrunkAgent-6499987.onnx",
+                "reward": 0.01750000026077032,
+                "creation_time": 1641302512.9278023,
+                "auxillary_file_paths": [
+                    "results\\DrunkAgent_Curriculum2\\DrunkAgent\\DrunkAgent-6499987.pt"
+                ]
+            },
+            {
+                "steps": 6929643,
+                "file_path": "results\\DrunkAgent_Curriculum2\\DrunkAgent\\DrunkAgent-6929643.onnx",
+                "reward": 4.656612873077393e-10,
+                "creation_time": 1641303104.8372467,
+                "auxillary_file_paths": [
+                    "results\\DrunkAgent_Curriculum2\\DrunkAgent\\DrunkAgent-6929643.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 6929643,
+            "file_path": "results\\DrunkAgent_Curriculum2\\DrunkAgent.onnx",
+            "reward": 4.656612873077393e-10,
+            "creation_time": 1641303104.8372467,
+            "auxillary_file_paths": [
+                "results\\DrunkAgent_Curriculum2\\DrunkAgent\\DrunkAgent-6929643.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.28.0.dev0",
+        "torch_version": "1.10.0+cu113"
+    }
+}

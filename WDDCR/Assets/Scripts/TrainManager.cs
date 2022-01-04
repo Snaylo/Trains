@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
+using Unity.MLAgents;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -104,18 +105,18 @@ public class TrainManager : MonoBehaviour
                 {
                     z = startZRight; //Driving left, speed should be negative and use front attach
                     offset = backAttachOffset;
-                    minimumSpeed *= -1;
-                    maximumSpeed *= -1;
                 }
                 var startPos = new Vector3(trackPositionsX[track], 0.0f, z);
                 var train = Instantiate(trainPrefab, startPos, quaternion.identity);
                 var trainScript = train.GetComponent<Train>();
                 var speedOfTrain = (track + 2) / 2;
                 var finalSpeed = Random.Range(speedOfTrain * minimumSpeed, speedOfTrain * maximumSpeed);
+                finalSpeed = Academy.Instance.EnvironmentParameters.GetWithDefault("train_speed", finalSpeed);
                 trainScript.SetSpeed(finalSpeed);
                 train.GetComponent<AudioSource>().pitch = Map(finalSpeed, speedOfTrain * minimumSpeed,
                     speedOfTrain * maximumSpeed, 0.5f, 2.0f);
                 var trainLength = Random.Range(minCarriages, maxCarriages);
+                //Academy.Instance.EnvironmentParameters.GetWithDefault("train_carriages", trainLength);
                 trainScript.numberOfCarriages = trainLength;
                 trainScript.driveRight = right;
                 trainScript.track = track;
